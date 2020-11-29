@@ -85,3 +85,16 @@ func (ball *Ball) handle() {
 	ball.context.Fill()
 	ball.context.ClosePath()
 }
+
+// Reset ball position and vector.
+func (ball *Ball) Reset() {
+	// set ball initial position
+	ball.x = ball.platform.circle.x
+	ball.y = ball.platform.rect.y - BallSize - 5
+	// and size
+	ball.radius = BallSize
+
+	// set ball initial vector
+	ball.vector.x = 5
+	ball.vector.y = -5
+}

@@ -8,8 +8,9 @@ import (
 )
 
 type TextBlock struct {
-	context canvas.Context2D
-	updated time.Time
+	context          canvas.Context2D
+	updated          time.Time
+	displayedCredits int
 }
 
 func (block TextBlock) drawFPS(now time.Time) {
@@ -19,13 +20,17 @@ func (block TextBlock) drawFPS(now time.Time) {
 	block.drawText(text, 0)
 }
 
-func (block *TextBlock) handle() {
+func (block *TextBlock) handle(credits int) {
 	now := time.Now()
 	// update FPS counter every second
 	if block.updated.Second() != now.Second() {
 		block.drawFPS(now)
 	}
 	block.updated = now
+	if block.displayedCredits != credits {
+		block.displayedCredits = credits
+		block.DrawCredits(credits)
+	}
 }
 
 func (block TextBlock) drawText(text string, row int) {
@@ -62,4 +67,15 @@ func (block TextBlock) DrawHits(hits int) {
 		text = fmt.Sprintf("%d hits", hits)
 	}
 	block.drawText(text, 2)
+}
+
+func (block TextBlock) DrawCredits(credits int) {
+	// make text
+	var text string
+	if credits == 1 {
+		text = fmt.Sprintf(" %d credit", credits)
+	} else {
+		text = fmt.Sprintf(" %d credits", credits)
+	}
+	block.drawText(text, 3)
 }

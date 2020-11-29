@@ -1,0 +1,17 @@
+breakout: tweaks for breakout game
+    
+ball.go: add Reset func and make
+the position and vector a bit random.
+    
+game.go: Add credits to Ball struct
+and give 2 credits for continued play in a game.
+Use ball.Reset() to set initial position/vector.
+In handler, allow continued play with the credits
+being decremented and use ball.Reset() when continuing.
+    
+main.go: Add rand.Seed call to make game ball start
+a bit different each time.
+    
+settings.go: Add InitialCredits.
+    
+text_block.go: Add DrawCredits.

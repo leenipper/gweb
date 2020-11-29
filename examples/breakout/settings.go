@@ -20,6 +20,7 @@ const (
 
 // ball
 const BallSize = 20
+const InitialCredits = 2
 
 // bricks
 const (
@@ -40,6 +41,6 @@ const (
 	TextTop    = 10
 	TextMargin = 5
 
-	TextBottom = TextTop + (TextHeight+TextMargin)*3
+	TextBottom = TextTop + (TextHeight+TextMargin)*4
 	TextRight  = TextLeft + TextWidth
 )

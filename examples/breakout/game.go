@@ -20,10 +20,12 @@ type Game struct {
 	ball     Ball
 	block    TextBlock
 	bricks   Bricks
+	credits  int // number of lost ball credits
 }
 
 func (game *Game) Init() {
 	game.state = &State{Stop: SubState{}}
+	game.credits = InitialCredits
 	context := game.Canvas.Context2D()
 
 	// draw background
@@ -51,19 +53,13 @@ func (game *Game) Init() {
 		windowHeight: game.Height,
 	}
 	game.block = TextBlock{context: context, updated: time.Now()}
-	ballCircle := Circle{
-		x:      game.platform.circle.x,
-		y:      game.platform.rect.y - BallSize - 5,
-		radius: BallSize,
-	}
 	game.ball = Ball{
 		context:      context,
-		vector:       Vector{x: 5, y: -5},
-		Circle:       ballCircle,
 		windowWidth:  game.Width,
 		windowHeight: game.Height,
 		platform:     &game.platform,
 	}
+	game.ball.Reset()
 	game.bricks = Bricks{
 		context:      context,
 		windowWidth:  game.Width,
@@ -72,6 +68,7 @@ func (game *Game) Init() {
 		text:         &game.block,
 	}
 	go game.bricks.Draw()
+	game.block.DrawCredits(game.credits)
 }
 
 func (game *Game) handler() {
@@ -84,7 +81,7 @@ func (game *Game) handler() {
 	wg.Add(5)
 	go func() {
 		// update FPS
-		game.block.handle()
+		game.block.handle(game.credits)
 		wg.Done()
 	}()
 	go func() {
@@ -104,9 +101,16 @@ func (game *Game) handler() {
 	}()
 	go func() {
 		// check if ball got out of playground
-		if game.ball.y >= game.Height {
-			go game.fail()
+		if game.ball.y >= (game.Height + BallSize) {
+			// When out of credits, game is over.
+			if game.credits == 0 {
+				go game.fail()
+			} else {
+				game.credits -= 1
+				game.ball.Reset()
+			}
 		}
+		//
 		if game.bricks.Count() == 0 {
 			go game.win()
 		}
